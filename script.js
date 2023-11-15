@@ -1,4 +1,16 @@
 var addButton = document.querySelector(".button.add #add-todo");
+// Initialize todo array
+
+// On page load, render all todos
+window.onload = function() {
+    var todosArray = JSON.parse(localStorage.getItem("todos")) || [];
+
+
+    var todos = document.querySelector("#current");
+    todosArray.forEach(function(todosArray){
+        createTodo(todosArray.text, todosArray.completed);
+    });
+};
 
 addButton.addEventListener("click", function(e){
     //create new form element set action to #
@@ -22,35 +34,84 @@ addButton.addEventListener("click", function(e){
     newForm.addEventListener("submit", function(e){
         e.preventDefault();
         var todoText = newText.value;
-        var newTodo = document.createElement("div");
-        var checkbox = document.createElement("input");
-        checkbox.setAttribute("type", "checkbox");
-    
-        newTodo.appendChild(checkbox);
-        newTodo.appendChild(document.createTextNode(todoText));
-        var todos = document.querySelector("#current");
-        todos.appendChild(newTodo);
+        createTodo(todoText, false, newForm);
         
-        localStorage.setItem("todo", newTodo);
+        // var newTodo = document.createElement("div");
+        // var checkbox = document.createElement("input");
+        // checkbox.setAttribute("type", "checkbox");
+    
+        // newTodo.appendChild(checkbox);
+        // newTodo.appendChild(document.createTextNode(todoText));
+        // var todos = document.querySelector("#current");
+        // todos.appendChild(newTodo);
+        
+        
 
-        checkbox.addEventListener("change", function(e) {
-            if (checkbox.checked) {
-                newTodo.classList.add("crossed");
-                setInterval(function() {
-                    newTodo.remove();
-                }, 2000);
+        // checkbox.addEventListener("change", function(e) {
+        //     if (checkbox.checked) {
+        //         newTodo.classList.add("crossed");
+        //         setInterval(function() {
+        //             newTodo.remove();
+        //         }, 2000);
                 
-            } else {
-                newTodo.classList.remove("crossed");
-            }
-        });
-        newForm.remove();
+        //     } else {
+        //         newTodo.classList.remove("crossed");
+        //     }
+        // });
+        //newForm.remove();
     })
 })
-//Here we wantto retrieve our todo data from local storage
-window.onload = function() {
-    localStorage.getItem("todo");
+
+// createTodo function to handle todo creation
+function createTodo(text, completed, form) {
+
+    var newTodo = document.createElement("div");
+    var checkbox = document.createElement("input");
+    checkbox.setAttribute("type", "checkbox");
+    checkbox.checked = completed;
+    if(completed) {        // Think about refactoring here. Could go in eventlistener
+        newTodo.classList.add("crossed");
+    } else {
+        newTodo.classList.remove("crossed");
+    }
+
+    checkbox.addEventListener("change", function(e) {
+        if (checkbox.checked) {
+            newTodo.classList.add("crossed");
+            setInterval(function() {
+                    newTodo.remove();
+                }, 2000);
+        } else {
+            newTodo.classList.remove("crossed");
+        }
+        updateTodosArray(text, checkbox.checked)
+    });
+    newTodo.appendChild(checkbox);
+    newTodo.appendChild(document.createTextNode(text));
+    var todos = document.querySelector("#current");
+    todos.appendChild(newTodo);
+
+    updateTodosArray(text, completed);
+
+    form.remove();
 }
+
+// updateTodoArray function to handle updating the todo array
+function updateTodosArray(text, completed) {
+    var index = todosData.findIndex(function(todosArray){
+        return todosArray.text === text;
+    });
+    if (index !== -1) {
+        todosArray[index].completed = completed;
+    } else {
+        todosArray.push({text: text, completed: completed});
+    }
+    localStorage.setItem("todos", JSON.stringify(todosArray));
+}
+
+
+//Here we wantto retrieve our todo data from local storage
+
 
 /*function addTodo() {
     //create new form element set action to #
