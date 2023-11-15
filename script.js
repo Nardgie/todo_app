@@ -37,6 +37,7 @@ window.onload = function() {
         createTodo(todoText, false, newForm);
 
         todosArray.push({text: todoText, completed: false});
+        updateTodosArray(todoText, false);
         localStorage.setItem("todos", JSON.stringify(todosArray));
         //newForm.remove();
 
@@ -98,7 +99,7 @@ window.onload = function() {
         var todos = document.querySelector("#current");
         todos.appendChild(newTodo);
 
-        updateTodosArray(text, completed);
+        //updateTodosArray(text, completed);
 
     
     }
@@ -110,12 +111,10 @@ window.onload = function() {
         });
         if (index !== -1) {
             todosArray[index].completed = completed;
-        } else {
-            todosArray.push({text: text, completed: completed});
-        }
-        
+        } 
     }
-
+    
+console.log(todosArray);
 };
 
 
