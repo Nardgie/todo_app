@@ -4,12 +4,16 @@ var addButton = document.querySelector(".button.add #add-todo");
 // On page load, render all todos
 window.onload = function() {
     var todosArray = JSON.parse(localStorage.getItem("todos")) || [];
+    for (let i = 0; i < todosArray.length; i++) {
+        createTodo(todosArray[i].text, todosArray[i].completed, todosArray[i].form)
+    }
 
+    // var todos = document.querySelector("#current");
+    // todosArray.forEach(function(todosArray){
+    //     createTodo(todosArray.text, todosArray.completed);
+    // });
+    
 
-    var todos = document.querySelector("#current");
-    todosArray.forEach(function(todosArray){
-        createTodo(todosArray.text, todosArray.completed);
-    });
 };
 
 addButton.addEventListener("click", function(e){
@@ -34,7 +38,11 @@ addButton.addEventListener("click", function(e){
     newForm.addEventListener("submit", function(e){
         e.preventDefault();
         var todoText = newText.value;
+        newForm.reset();
         createTodo(todoText, false, newForm);
+
+        todosArray.push({text: todoText, completed: false});
+        localStorage.setItem("todos", JSON.stringify(todosArray));
         
         // var newTodo = document.createElement("div");
         // var checkbox = document.createElement("input");
@@ -64,16 +72,13 @@ addButton.addEventListener("click", function(e){
 
 // createTodo function to handle todo creation
 function createTodo(text, completed, form) {
-
     var newTodo = document.createElement("div");
     var checkbox = document.createElement("input");
     checkbox.setAttribute("type", "checkbox");
     checkbox.checked = completed;
     if(completed) {        // Think about refactoring here. Could go in eventlistener
         newTodo.classList.add("crossed");
-    } else {
-        newTodo.classList.remove("crossed");
-    }
+    } 
 
     checkbox.addEventListener("change", function(e) {
         if (checkbox.checked) {
@@ -84,7 +89,13 @@ function createTodo(text, completed, form) {
         } else {
             newTodo.classList.remove("crossed");
         }
-        updateTodosArray(text, checkbox.checked)
+        //updateTodosArray(text, checkbox.checked)
+        for (let i = 0; i< todosArray.length; i++) {
+            if (todosArray[i].text === text) {
+                todosArray[i].completed = checkbox.checked;
+                localStorage.setItem("todos", JSON.stringify(todosArray));
+            }
+        }
     });
     newTodo.appendChild(checkbox);
     newTodo.appendChild(document.createTextNode(text));
@@ -98,7 +109,7 @@ function createTodo(text, completed, form) {
 
 // updateTodoArray function to handle updating the todo array
 function updateTodosArray(text, completed) {
-    var index = todosData.findIndex(function(todosArray){
+    var index = todosArray.findIndex(function(todosArray){
         return todosArray.text === text;
     });
     if (index !== -1) {
@@ -106,7 +117,7 @@ function updateTodosArray(text, completed) {
     } else {
         todosArray.push({text: text, completed: completed});
     }
-    localStorage.setItem("todos", JSON.stringify(todosArray));
+    
 }
 
 
